@@ -9,6 +9,8 @@ export interface GLHeraRouter {
 
   /** base route for router, like /glhera */
   base: string;
+  /** Getter with the last url that was loaded without the base */
+  lastURL: string;
 
   /**
    * Push a route based on url sent, will update the history api
@@ -89,7 +91,12 @@ export function glheraRouter(
     //
     // Set the router's URL and query parameters
 
+    if (url.startsWith('/')) {
+      url = 'http://localhost' + url;
+    }
+
     const _url = new URL(url);
+
     const _query = {} as Record<string, string>;
 
     for (const [key, value] of _url.searchParams.entries()) {
@@ -124,7 +131,12 @@ export function glheraRouter(
     historyMethod: 'pushState' | 'replaceState',
   ): void {
     if (!queryObj) {
-      const _url = new URL(pathname);
+      let strUrl = pathname;
+      if (strUrl.startsWith('/')) {
+        strUrl = 'http://localhost' + strUrl;
+      }
+
+      const _url = new URL(strUrl);
       queryObj = Object.fromEntries(_url.searchParams.entries());
       pathname = _url.pathname;
     }
@@ -173,5 +185,8 @@ export function glheraRouter(
     replace,
     popState,
     base,
+    get lastURL() {
+      return lastURL;
+    },
   };
 }
