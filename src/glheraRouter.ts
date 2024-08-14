@@ -55,6 +55,32 @@ export interface GLHeraRouter<Q extends Record<string, any>> {
 //
 //
 
+export type GLHeraRouterOptions<Q extends Record<string, any>> = {
+  /**
+   * Initial URL to create the router from
+   * @default '/'
+   */
+  url?: string;
+  /**
+   * Base route for router, like /glhera
+   * @default ''
+   */
+  base?: string;
+  /**
+   * If true will not access the browser history api
+   * @default false
+   */
+  testing?: boolean;
+  /**
+   * Parser function to convert query string to object
+   * @default {(query) => query)}
+   */
+  parser?: (query: Record<string, string>) => Q;
+};
+
+//
+//
+
 /**
  * Create a router object that can be used to manage the state of the router
  * @param url URL to create the router from
@@ -62,34 +88,36 @@ export interface GLHeraRouter<Q extends Record<string, any>> {
  * @param testing if true will not access the browser history api
  */
 export function glheraRouter<Q extends Record<string, any>>(
-  url: string,
-  base = '',
-  testing = false,
-  parser: (query: Record<string, string>) => Q = (query) => query as any,
+  opt: GLHeraRouterOptions<Q> = {},
 ): GLHeraRouter<Q> {
   //
   // Set the pathname and queryObj from the URL
+
+  let url: string | URL = opt.url || '/';
+  const base = opt.base || '';
+  const testing = opt.testing || false;
+  const parser = opt.parser || ((query) => query as Q);
 
   if (url.startsWith('/')) {
     url = 'http://localhost' + url;
   }
 
-  const _url = new URL(url);
-  const queryObj = Object.fromEntries(_url.searchParams.entries());
+  url = new URL(url);
+  const queryObj = Object.fromEntries(url.searchParams.entries());
 
   //
   //
 
-  if (_url.pathname.startsWith(base)) {
-    _url.pathname = _url.pathname.slice(base.length);
+  if (url.pathname.startsWith(base)) {
+    url.pathname = url.pathname.slice(base.length);
   }
 
   //
   //
 
-  const pathSignal = signalFactory<string>(_url.pathname);
+  const pathSignal = signalFactory<string>(url.pathname);
   const querySignal = signalFactory<Q>(parser(queryObj));
-  let lastURL = _url.pathname + _url.search;
+  let lastURL = url.pathname + url.search;
 
   //
   //
