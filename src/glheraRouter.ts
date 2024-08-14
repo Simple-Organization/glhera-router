@@ -43,7 +43,12 @@ export interface GLHeraRouter {
    *
    * The url needs to have http:// and origin to create a new URL object
    */
-  popState(url: string): void;
+  setURL(url: string): void;
+
+  /**
+   * Method to subscribe to window.addEventListener('popstate', ...);
+   */
+  subWinPopState(): () => void;
 }
 
 //
@@ -87,7 +92,7 @@ export function glheraRouter(
   //
   //
 
-  function popState(url: string): void {
+  function setURL(url: string): void {
     //
     // Set the router's URL and query parameters
 
@@ -178,12 +183,25 @@ export function glheraRouter(
   //
   //
 
+  function subWinPopState(): () => void {
+    const updateURL = () => {
+      setURL(window.location.href);
+    };
+
+    window.addEventListener('popstate', updateURL);
+    return () => window.removeEventListener('popstate', updateURL);
+  }
+
+  //
+  //
+
   return {
     pathname: pathSignal,
     query: querySignal,
     push,
     replace,
-    popState,
+    setURL,
+    subWinPopState,
     base,
     get lastURL() {
       return lastURL;

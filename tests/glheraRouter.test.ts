@@ -103,13 +103,13 @@ test('Must replace with and without query params', () => {
 test('Must popstate correctly', () => {
   const router = glheraRouter('/', '', true);
 
-  router.popState('/testa');
+  router.setURL('/testa');
 
   expect(router.pathname.value).toBe('/testa');
   expect(router.query.value).toEqual({});
   expect(router.lastURL).toBe('/testa');
 
-  router.popState('/test?id=1');
+  router.setURL('/test?id=1');
 
   expect(router.pathname.value).toBe('/test');
   expect(router.query.value).toEqual({ id: '1' });
