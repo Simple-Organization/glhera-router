@@ -256,3 +256,30 @@ test('Should give a wrong pathname if push is called with queryObj and query str
   expect(router.query.value).toEqual({ arroz: 1 });
   expect(router.lastURL).toBe('/test?id=1?arroz=1');
 });
+
+//
+//
+
+test('When is using history, it should update the URL correctly', () => {
+  const router = glheraRouter();
+
+  const old = globalThis.history;
+
+  let newUrl = '';
+
+  globalThis.history = {
+    pushState(data: any, unused: string, url: string) {
+      newUrl = url;
+    },
+  } as any;
+
+  router.push('/glhera/login/aaaaa?search=%5B"teste"%5D');
+
+  expect(router.pathname.value).toBe('/glhera/login/aaaaa');
+  expect(router.query.value).toEqual({ search: '["teste"]' });
+  expect(router.lastURL).toBe('/glhera/login/aaaaa?search=%5B%22teste%22%5D');
+
+  expect(newUrl).toBe('/glhera/login/aaaaa?search=%5B%22teste%22%5D');
+
+  globalThis.history = old;
+});

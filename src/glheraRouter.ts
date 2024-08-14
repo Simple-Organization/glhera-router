@@ -213,7 +213,7 @@ export function glheraRouter<Q extends Record<string, any>>(
     //
     // Only access browser api like history if not in testing
     if (!testing) {
-      history[historyMethod](null, '', base + pathname);
+      history[historyMethod](null, '', base + lastURL);
     }
   }
 
