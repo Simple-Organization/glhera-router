@@ -241,3 +241,18 @@ test('Should not parse when send a queryObj in push', () => {
   expect(router.query.value).toEqual({ arroz: 1 });
   expect(router.lastURL).toBe('/test?arroz=1');
 });
+
+//
+//
+
+test('Should give a wrong pathname if push is called with queryObj and query string in the URL', () => {
+  const router = glheraRouter({ testing: true });
+
+  router.push('/test?id=1', {
+    arroz: 1,
+  });
+
+  expect(router.pathname.value).toBe('/test?id=1');
+  expect(router.query.value).toEqual({ arroz: 1 });
+  expect(router.lastURL).toBe('/test?id=1?arroz=1');
+});
