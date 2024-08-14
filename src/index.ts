@@ -1,3 +1,3 @@
-export { getRoute, matchRoute } from './matchRoute';
+export { getRoute, matchRoute, type RoutesMap } from './matchRoute';
 
 export { glheraRouter, type GLHeraRouter } from './glheraRouter';

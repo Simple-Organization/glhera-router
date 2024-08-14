@@ -3,14 +3,9 @@ import { Signal, signalFactory } from 'signal-factory';
 //
 //
 
-export interface GLHeraRouter {
+export interface GLHeraRouter<Q extends Record<string, any>> {
   pathname: Signal<string>;
-  query: Signal<Record<string, string>>;
-
-  /** base route for router, like /glhera */
-  base: string;
-  /** Getter with the last url that was loaded without the base */
-  lastURL: string;
+  query: Signal<Q>;
 
   /**
    * Push a route based on url sent, will update the history api
@@ -23,7 +18,7 @@ export interface GLHeraRouter {
    *
    * If the URL is the same will not update history api, but will update the queryObj signal anyway
    */
-  push(pathname: string, queryObj: Record<string, any>): void;
+  push(pathname: string, queryObj: Q): void;
 
   /**
    * Replace a route based on url sent, will update the history api
@@ -36,7 +31,7 @@ export interface GLHeraRouter {
    *
    * If the URL is the same will not update history api, but will update the queryObj signal anyway
    */
-  replace(pathname: string, queryObj: Record<string, any>): void;
+  replace(pathname: string, queryObj: Q): void;
 
   /**
    * Change the router state from a url string, does not update the history api
@@ -49,6 +44,12 @@ export interface GLHeraRouter {
    * Method to subscribe to window.addEventListener('popstate', ...);
    */
   subWinPopState(): () => void;
+
+  /**
+   * Getter with the last url that was loaded without the base
+   * that property is used for tests
+   */
+  lastURL: string;
 }
 
 //
@@ -60,11 +61,12 @@ export interface GLHeraRouter {
  * @param base base route for router, like /glhera
  * @param testing if true will not access the browser history api
  */
-export function glheraRouter(
+export function glheraRouter<Q extends Record<string, any>>(
   url: string,
   base = '',
   testing = false,
-): GLHeraRouter {
+  parser: (query: Record<string, string>) => Q = (query) => query as any,
+): GLHeraRouter<Q> {
   //
   // Set the pathname and queryObj from the URL
 
@@ -86,7 +88,7 @@ export function glheraRouter(
   //
 
   const pathSignal = signalFactory<string>(_url.pathname);
-  const querySignal = signalFactory<Record<string, string>>(queryObj);
+  const querySignal = signalFactory<Q>(parser(queryObj));
   let lastURL = _url.pathname + _url.search;
 
   //
@@ -102,10 +104,10 @@ export function glheraRouter(
 
     const _url = new URL(url);
 
-    const _query = {} as Record<string, string>;
+    const queryObj = {} as Record<string, string>;
 
     for (const [key, value] of _url.searchParams.entries()) {
-      _query[key] = value;
+      queryObj[key] = value;
     }
 
     if (_url.pathname.startsWith(base)) {
@@ -120,7 +122,7 @@ export function glheraRouter(
     }
 
     pathSignal.value = _url.pathname;
-    querySignal.value = _query;
+    querySignal.value = parser(queryObj);
     lastURL = newURL;
   }
 
@@ -132,7 +134,7 @@ export function glheraRouter(
    */
   function _updateURLSignal(
     pathname: string,
-    queryObj: Record<string, string> | undefined,
+    queryObj: Q | undefined,
     historyMethod: 'pushState' | 'replaceState',
   ): void {
     if (!queryObj) {
@@ -142,15 +144,33 @@ export function glheraRouter(
       }
 
       const _url = new URL(strUrl);
-      queryObj = Object.fromEntries(_url.searchParams.entries());
+      queryObj = parser(Object.fromEntries(_url.searchParams.entries()));
       pathname = _url.pathname;
     }
+
+    // Make all properties of queryObj strings
+
+    const queryObjCopy = {} as Record<string, string>;
+
+    for (const key in queryObj) {
+      if (queryObj[key] === null || queryObj[key] === undefined) {
+        continue;
+      }
+
+      if (typeof queryObj[key] === 'object') {
+        queryObjCopy[key] = JSON.stringify(queryObj[key]);
+      } else {
+        queryObjCopy[key] = queryObj[key] + '';
+      }
+    }
+
+    //
 
     pathSignal.value = pathname;
     querySignal.value = queryObj;
 
     let newURL = pathname;
-    const queryStr = new URLSearchParams(queryObj).toString();
+    const queryStr = new URLSearchParams(queryObjCopy).toString();
 
     if (queryStr) {
       newURL += '?' + queryStr;
@@ -172,11 +192,11 @@ export function glheraRouter(
   //
   //
 
-  function replace(pathname: string, queryObj?: Record<string, any>): void {
+  function replace(pathname: string, queryObj?: Q): void {
     _updateURLSignal(pathname, queryObj, 'replaceState');
   }
 
-  function push(pathname: string, queryObj?: Record<string, any>): void {
+  function push(pathname: string, queryObj?: Q): void {
     _updateURLSignal(pathname, queryObj, 'pushState');
   }
 
@@ -202,7 +222,6 @@ export function glheraRouter(
     replace,
     setURL,
     subWinPopState,
-    base,
     get lastURL() {
       return lastURL;
     },
