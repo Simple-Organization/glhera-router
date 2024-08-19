@@ -1,12 +1,5 @@
 import { test, expect } from '@playwright/test';
 import { glheraRouter } from '../src';
-import { setSignalFactory } from 'signal-factory';
-import { signal } from 'signal-factory/vanilla';
-
-//
-//
-
-setSignalFactory(signal);
 
 //
 //
