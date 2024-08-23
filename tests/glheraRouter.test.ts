@@ -8,25 +8,25 @@ test('Must create a router successfully with a url', () => {
   const router1 = glheraRouter({ url: 'http://localhost/glhera/' });
 
   // Expect the signal factory to be the same as the one we set.
-  expect(router1.pathname.value).toBe('/glhera/');
-  expect(router1.query.value).toEqual({});
-  expect(router1.lastURL).toBe('/glhera/');
+  expect(router1.pathname.get()).toBe('/glhera/');
+  expect(router1.query.get()).toEqual({});
+  expect(router1.lastURL()).toBe('/glhera/');
 
   //
 
   const router2 = glheraRouter({});
 
-  expect(router2.pathname.value).toBe('/');
-  expect(router2.query.value).toEqual({});
-  expect(router2.lastURL).toBe('/');
+  expect(router2.pathname.get()).toBe('/');
+  expect(router2.query.get()).toEqual({});
+  expect(router2.lastURL()).toBe('/');
 
   //
 
   const router3 = glheraRouter();
 
-  expect(router3.pathname.value).toBe('/');
-  expect(router3.query.value).toEqual({});
-  expect(router3.lastURL).toBe('/');
+  expect(router3.pathname.get()).toBe('/');
+  expect(router3.query.get()).toEqual({});
+  expect(router3.lastURL()).toBe('/');
 });
 
 //
@@ -39,9 +39,9 @@ test('Must create a router successfully with a url with base', () => {
   });
 
   // Expect the signal factory to be the same as the one we set.
-  expect(router.pathname.value).toBe('/');
-  expect(router.query.value).toEqual({});
-  expect(router.lastURL).toBe('/');
+  expect(router.pathname.get()).toBe('/');
+  expect(router.query.get()).toEqual({});
+  expect(router.lastURL()).toBe('/');
 });
 
 //
@@ -55,15 +55,15 @@ test('Must push a route correctly', () => {
   });
 
   // Expect the signal factory to be the same as the one we set.
-  expect(router.pathname.value).toBe('/');
-  expect(router.query.value).toEqual({});
-  expect(router.lastURL).toBe('/');
+  expect(router.pathname.get()).toBe('/');
+  expect(router.query.get()).toEqual({});
+  expect(router.lastURL()).toBe('/');
 
   router.push('/test');
 
-  expect(router.pathname.value).toBe('/test');
-  expect(router.query.value).toEqual({});
-  expect(router.lastURL).toBe('/test');
+  expect(router.pathname.get()).toBe('/test');
+  expect(router.query.get()).toEqual({});
+  expect(router.lastURL()).toBe('/test');
 });
 
 //
@@ -78,15 +78,15 @@ test('Must push with query params', () => {
 
   router.push('/test?id=1');
 
-  expect(router.pathname.value).toBe('/test');
-  expect(router.query.value).toEqual({ id: '1' });
-  expect(router.lastURL).toBe('/test?id=1');
+  expect(router.pathname.get()).toBe('/test');
+  expect(router.query.get()).toEqual({ id: '1' });
+  expect(router.lastURL()).toBe('/test?id=1');
 
   router.push('/test', { id: '2' });
 
-  expect(router.pathname.value).toBe('/test');
-  expect(router.query.value).toEqual({ id: '2' });
-  expect(router.lastURL).toBe('/test?id=2');
+  expect(router.pathname.get()).toBe('/test');
+  expect(router.query.get()).toEqual({ id: '2' });
+  expect(router.lastURL()).toBe('/test?id=2');
 });
 
 //
@@ -97,21 +97,21 @@ test('Must replace with and without query params', () => {
 
   router.replace('/testa');
 
-  expect(router.pathname.value).toBe('/testa');
-  expect(router.query.value).toEqual({});
-  expect(router.lastURL).toBe('/testa');
+  expect(router.pathname.get()).toBe('/testa');
+  expect(router.query.get()).toEqual({});
+  expect(router.lastURL()).toBe('/testa');
 
   router.replace('/test?id=1');
 
-  expect(router.pathname.value).toBe('/test');
-  expect(router.query.value).toEqual({ id: '1' });
-  expect(router.lastURL).toBe('/test?id=1');
+  expect(router.pathname.get()).toBe('/test');
+  expect(router.query.get()).toEqual({ id: '1' });
+  expect(router.lastURL()).toBe('/test?id=1');
 
   router.replace('/test', { id: '2' });
 
-  expect(router.pathname.value).toBe('/test');
-  expect(router.query.value).toEqual({ id: '2' });
-  expect(router.lastURL).toBe('/test?id=2');
+  expect(router.pathname.get()).toBe('/test');
+  expect(router.query.get()).toEqual({ id: '2' });
+  expect(router.lastURL()).toBe('/test?id=2');
 });
 
 //
@@ -122,21 +122,21 @@ test('Must popstate correctly', () => {
 
   router.setURL('/testa');
 
-  expect(router.pathname.value).toBe('/testa');
-  expect(router.query.value).toEqual({});
-  expect(router.lastURL).toBe('/testa');
+  expect(router.pathname.get()).toBe('/testa');
+  expect(router.query.get()).toEqual({});
+  expect(router.lastURL()).toBe('/testa');
 
   router.setURL('/test?id=1');
 
-  expect(router.pathname.value).toBe('/test');
-  expect(router.query.value).toEqual({ id: '1' });
-  expect(router.lastURL).toBe('/test?id=1');
+  expect(router.pathname.get()).toBe('/test');
+  expect(router.query.get()).toEqual({ id: '1' });
+  expect(router.lastURL()).toBe('/test?id=1');
 
   router.replace('http://localhost/test');
 
-  expect(router.pathname.value).toBe('/test');
-  expect(router.query.value).toEqual({});
-  expect(router.lastURL).toBe('/test');
+  expect(router.pathname.get()).toBe('/test');
+  expect(router.query.get()).toEqual({});
+  expect(router.lastURL()).toBe('/test');
 });
 
 //
@@ -155,8 +155,8 @@ test('Must stringify objects, arrays correctly correctly', () => {
     g: true,
   });
 
-  expect(router.pathname.value).toBe('/test');
-  expect(router.query.value).toEqual({
+  expect(router.pathname.get()).toBe('/test');
+  expect(router.query.get()).toEqual({
     a: [1, 2, 3],
     b: { c: 1, d: 2 },
     c: '1',
@@ -165,7 +165,7 @@ test('Must stringify objects, arrays correctly correctly', () => {
     f: undefined,
     g: true,
   });
-  expect(router.lastURL).toBe(
+  expect(router.lastURL()).toBe(
     '/test?a=%5B1%2C2%2C3%5D&b=%7B%22c%22%3A1%2C%22d%22%3A2%7D&c=1&d=2&g=true',
   );
 });
@@ -186,32 +186,32 @@ test('The parser must change the query object correctly', () => {
     '/test?a=%5B1%2C2%2C3%5D&b=%7B%22c%22%3A1%2C%22d%22%3A2%7D&c=1&d=2&g=true',
   );
 
-  expect(router.pathname.value).toBe('/test');
-  expect(router.query.value).toEqual({ id: null });
-  expect(router.lastURL).toBe(
+  expect(router.pathname.get()).toBe('/test');
+  expect(router.query.get()).toEqual({ id: null });
+  expect(router.lastURL()).toBe(
     '/test?a=%5B1%2C2%2C3%5D&b=%7B%22c%22%3A1%2C%22d%22%3A2%7D&c=1&d=2&g=true',
   );
 
   router.setURL('/test?id=1');
 
-  expect(router.pathname.value).toBe('/test');
-  expect(router.query.value).toEqual({ id: 1 });
-  expect(router.lastURL).toBe('/test?id=1');
+  expect(router.pathname.get()).toBe('/test');
+  expect(router.query.get()).toEqual({ id: 1 });
+  expect(router.lastURL()).toBe('/test?id=1');
 
   //
   // Must work on push and replace
 
   router.push('/test1?id=1');
 
-  expect(router.pathname.value).toBe('/test1');
-  expect(router.query.value).toEqual({ id: 1 });
-  expect(router.lastURL).toBe('/test1?id=1');
+  expect(router.pathname.get()).toBe('/test1');
+  expect(router.query.get()).toEqual({ id: 1 });
+  expect(router.lastURL()).toBe('/test1?id=1');
 
   router.replace('/test2?id=1');
 
-  expect(router.pathname.value).toBe('/test2');
-  expect(router.query.value).toEqual({ id: 1 });
-  expect(router.lastURL).toBe('/test2?id=1');
+  expect(router.pathname.get()).toBe('/test2');
+  expect(router.query.get()).toEqual({ id: 1 });
+  expect(router.lastURL()).toBe('/test2?id=1');
 });
 
 //
@@ -230,9 +230,9 @@ test('Should not parse when send a queryObj in push', () => {
     arroz: 1,
   } as any);
 
-  expect(router.pathname.value).toBe('/test');
-  expect(router.query.value).toEqual({ arroz: 1 });
-  expect(router.lastURL).toBe('/test?arroz=1');
+  expect(router.pathname.get()).toBe('/test');
+  expect(router.query.get()).toEqual({ arroz: 1 });
+  expect(router.lastURL()).toBe('/test?arroz=1');
 });
 
 //
@@ -245,9 +245,9 @@ test('Should give a wrong pathname if push is called with queryObj and query str
     arroz: 1,
   });
 
-  expect(router.pathname.value).toBe('/test?id=1');
-  expect(router.query.value).toEqual({ arroz: 1 });
-  expect(router.lastURL).toBe('/test?id=1?arroz=1');
+  expect(router.pathname.get()).toBe('/test?id=1');
+  expect(router.query.get()).toEqual({ arroz: 1 });
+  expect(router.lastURL()).toBe('/test?id=1?arroz=1');
 });
 
 //
@@ -268,9 +268,9 @@ test('When is using history, it should update the URL correctly', () => {
 
   router.push('/glhera/login/aaaaa?search=%5B"teste"%5D');
 
-  expect(router.pathname.value).toBe('/glhera/login/aaaaa');
-  expect(router.query.value).toEqual({ search: '["teste"]' });
-  expect(router.lastURL).toBe('/glhera/login/aaaaa?search=%5B%22teste%22%5D');
+  expect(router.pathname.get()).toBe('/glhera/login/aaaaa');
+  expect(router.query.get()).toEqual({ search: '["teste"]' });
+  expect(router.lastURL()).toBe('/glhera/login/aaaaa?search=%5B%22teste%22%5D');
 
   expect(newUrl).toBe('/glhera/login/aaaaa?search=%5B%22teste%22%5D');
 

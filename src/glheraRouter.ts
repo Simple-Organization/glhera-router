@@ -1,11 +1,21 @@
-import { Signal, signalFactory } from 'signal-factory';
+import {
+  ReadableSignal,
+  setSignalFactory,
+  signalFactory,
+} from 'signal-factory';
+import { store } from 'signal-factory/store';
+
+//
+//
+
+setSignalFactory(store);
 
 //
 //
 
 export interface GLHeraRouter<Q extends Record<string, any>> {
-  pathname: Signal<string>;
-  query: Signal<Q>;
+  pathname: ReadableSignal<string>;
+  query: ReadableSignal<Q>;
 
   /**
    * Push a route based on url sent, will update the history api
@@ -49,7 +59,7 @@ export interface GLHeraRouter<Q extends Record<string, any>> {
    * Getter with the last url that was loaded without the base
    * that property is used for tests
    */
-  lastURL: string;
+  lastURL(): string;
 }
 
 //
@@ -115,8 +125,8 @@ export function glheraRouter<Q extends Record<string, any>>(
   //
   //
 
-  const pathSignal = signalFactory<string>(url.pathname);
-  const querySignal = signalFactory<Q>(parser(queryObj));
+  const pathSignal = signalFactory(url.pathname);
+  const querySignal = signalFactory(parser(queryObj));
   let lastURL = url.pathname + url.search;
 
   //
@@ -149,8 +159,8 @@ export function glheraRouter<Q extends Record<string, any>>(
       newURL += '?' + queryStr;
     }
 
-    pathSignal.value = _url.pathname;
-    querySignal.value = parser(queryObj);
+    pathSignal.set(_url.pathname);
+    querySignal.set(parser(queryObj));
     lastURL = newURL;
   }
 
@@ -194,8 +204,8 @@ export function glheraRouter<Q extends Record<string, any>>(
 
     //
 
-    pathSignal.value = pathname;
-    querySignal.value = queryObj;
+    pathSignal.set(pathname);
+    querySignal.set(queryObj);
 
     let newURL = pathname;
     const queryStr = new URLSearchParams(queryObjCopy).toString();
@@ -250,7 +260,7 @@ export function glheraRouter<Q extends Record<string, any>>(
     replace,
     setURL,
     subWinPopState,
-    get lastURL() {
+    lastURL(): string {
       return lastURL;
     },
   };
