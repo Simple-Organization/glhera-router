@@ -132,7 +132,7 @@ test('Must popstate correctly', () => {
   expect(router.query.get()).toEqual({ id: '1' });
   expect(router.lastURL()).toBe('/test?id=1');
 
-  router.replace('http://localhost/test');
+  router.setURL('http://localhost/test');
 
   expect(router.pathname.get()).toBe('/test');
   expect(router.query.get()).toEqual({});
@@ -275,4 +275,19 @@ test('When is using history, it should update the URL correctly', () => {
   expect(newUrl).toBe('/glhera/login/aaaaa?search=%5B%22teste%22%5D');
 
   globalThis.history = old;
+});
+
+//
+//
+
+test('When push a pathname that does not starts with / it must add', () => {
+  const router = glheraRouter({ testing: true });
+
+  router.push('', {
+    arroz: 1,
+  });
+
+  expect(router.pathname.get()).toBe('/');
+  expect(router.query.get()).toEqual({ arroz: 1 });
+  expect(router.lastURL()).toBe('/?arroz=1');
 });

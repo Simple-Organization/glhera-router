@@ -175,6 +175,10 @@ export function glheraRouter<Q extends Record<string, any>>(
     queryObj: Q | undefined,
     historyMethod: 'pushState' | 'replaceState',
   ): void {
+    if (!pathname.startsWith('/')) {
+      pathname = '/' + pathname;
+    }
+
     if (!queryObj) {
       let strUrl = pathname;
       if (strUrl.startsWith('/')) {
