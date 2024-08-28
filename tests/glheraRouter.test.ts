@@ -343,7 +343,6 @@ test('match must work', () => {
   expect(matched).toBe('user');
 });
 
-
 //
 //
 
@@ -369,4 +368,41 @@ test('match should return not found', () => {
   matched = router.match(routes as any, 'notfound' as any);
 
   expect(matched).toBe('notfound');
+});
+
+//
+//
+
+test('When push/replace with a object must update only the query params', () => {
+  const router = glheraRouter({ testing: true });
+
+  //
+
+  expect(router.pathname.get()).toBe('/');
+  expect(router.query.get()).toEqual({});
+  expect(router.lastURL()).toBe('/');
+
+  //
+
+  router.push({
+    arroz: 1,
+  });
+
+  //
+
+  expect(router.pathname.get()).toBe('/');
+  expect(router.query.get()).toEqual({ arroz: 1 });
+  expect(router.lastURL()).toBe('/?arroz=1');
+
+  //
+
+  router.replace({
+    batata: 1,
+  });
+
+  //
+
+  expect(router.pathname.get()).toBe('/');
+  expect(router.query.get()).toEqual({ batata: 1 });
+  expect(router.lastURL()).toBe('/?batata=1');
 });

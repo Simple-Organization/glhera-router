@@ -35,6 +35,12 @@ export interface GLHeraRouter<Q extends Record<string, any>> {
    * If the URL is the same will not update history api, but will update the queryObj signal anyway
    */
   push(pathname: string, queryObj: Q): void;
+  /**
+   * Push a route based on pathname and queryObj sent, will update the history api
+   *
+   * If the URL is the same will not update history api, but will update the queryObj signal anyway
+   */
+  push(queryObj: Q): void;
 
   /**
    * Replace a route based on url sent, will update the history api
@@ -48,6 +54,12 @@ export interface GLHeraRouter<Q extends Record<string, any>> {
    * If the URL is the same will not update history api, but will update the queryObj signal anyway
    */
   replace(pathname: string, queryObj: Q): void;
+  /**
+   * Replace a route based on pathname and queryObj sent, will update the history api
+   *
+   * If the URL is the same will not update history api, but will update the queryObj signal anyway
+   */
+  replace(queryObj: Q): void;
 
   /**
    * Change the router state from a url string, does not update the history api
@@ -184,10 +196,27 @@ export function glheraRouter<Q extends Record<string, any>>(
    * Internal method used by pushRoute and replaceRoute
    */
   function _updateURLSignal(
-    pathname: string,
-    queryObj: Q | undefined,
+    arg1: string | Q,
+    arg2: Q | undefined,
     historyMethod: 'pushState' | 'replaceState',
   ): void {
+    let pathname: string;
+    let queryObj: Q;
+
+    if (typeof arg1 === 'string') {
+      pathname = arg1;
+      queryObj = arg2 as Q;
+    } else if (
+      arg1 !== null &&
+      typeof arg1 === 'object' &&
+      arg2 === undefined
+    ) {
+      pathname = pathSignal.get();
+      queryObj = arg1;
+    } else {
+      throw new Error('Invalid router arguments');
+    }
+
     if (!pathname.startsWith('/')) {
       pathname = '/' + pathname;
     }
@@ -247,12 +276,12 @@ export function glheraRouter<Q extends Record<string, any>>(
   //
   //
 
-  function replace(pathname: string, queryObj?: Q): void {
-    _updateURLSignal(pathname, queryObj, 'replaceState');
+  function replace(arg1: string | Q, arg2?: Q): void {
+    _updateURLSignal(arg1, arg2, 'replaceState');
   }
 
-  function push(pathname: string, queryObj?: Q): void {
-    _updateURLSignal(pathname, queryObj, 'pushState');
+  function push(arg1: string | Q, arg2?: Q): void {
+    _updateURLSignal(arg1, arg2, 'pushState');
   }
 
   //
