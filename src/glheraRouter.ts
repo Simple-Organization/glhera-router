@@ -4,11 +4,17 @@ import {
   signalFactory,
 } from 'signal-factory';
 import { store } from 'signal-factory/store';
+import { isPathMatch } from './matchPath';
 
 //
 //
 
 setSignalFactory(store);
+
+//
+//
+
+export type RoutesMap = Record<string, Function>;
 
 //
 //
@@ -60,6 +66,13 @@ export interface GLHeraRouter<Q extends Record<string, any>> {
    * that property is used for tests
    */
   lastURL(): string;
+
+  /**
+   * Match the current pathname with the routes map
+   * @param map Routes map to match the pathname
+   * @param notFound Function returned if no route is found
+   */
+  match(map: RoutesMap, notFound?: Function): Function | null;
 }
 
 //
@@ -257,6 +270,26 @@ export function glheraRouter<Q extends Record<string, any>>(
   //
   //
 
+  function match(map: RoutesMap, notFound?: Function): Function | null {
+    const keys = Object.keys(map);
+    const pathname = pathSignal.get();
+
+    for (let i = 0; i < keys.length; i++) {
+      if (isPathMatch(keys[i], pathname)) {
+        return map[keys[i]];
+      }
+    }
+
+    if (notFound) {
+      return notFound;
+    }
+
+    return null;
+  }
+
+  //
+  //
+
   return {
     pathname: pathSignal,
     query: querySignal,
@@ -264,6 +297,7 @@ export function glheraRouter<Q extends Record<string, any>>(
     replace,
     setURL,
     subWinPopState,
+    match,
     lastURL(): string {
       return lastURL;
     },

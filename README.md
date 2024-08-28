@@ -13,12 +13,41 @@ const router = glheraRouter({
 });
 
 router.push('/users?id=1');
-router.pathname.value; // /users
-router.query.value; // { id: '1' }
+router.pathname.get(); // /users
+router.query.get(); // { id: '1' }
 
 router.replace('/users', { id: 1 });
-router.pathname.value; // /users
-router.query.value; // { id: 1 }
+router.pathname.get(); // /users
+router.query.get(); // { id: 1 }
+```
+
+### Dando `match` em uma rota
+
+O `match` da rota dependerá do framework usado, usaremos o exemplo com `Svelte` e com o router anterior
+
+```ts
+// Crie o router
+const router = glheraRouter({ url: location.href });
+```
+
+```svelte
+<script lang="ts">
+import { router } from './router'
+import HomeSvelte from './Home.svelte'
+import ClientSvelte from './Client.svelte'
+import LoginPageSvelte from './LoginPage.svelte'
+import NotFoundSvelte from './NotFound.svelte'
+
+const topRoutes: Record<string, Function> = {
+  '/': HomeSvelte,
+  '/client': ClientSvelte,
+  '/login': LoginPageSvelte,
+};
+
+let component = router.match(topRoutes, NotFoundSvelte);
+</script>
+
+<svelte:component this={component} />
 ```
 
 ### Tipagem para query params com `parser`
@@ -65,17 +94,17 @@ Exemplo com `push`
 const router = glheraRouter();
 
 router.push('/custumers?custumer_id=1');
-router.pathname.value; // /custumers
-router.query.value; // { id: '1' }
+router.pathname.get(); // /custumers
+router.query.get(); // { id: '1' }
 
 router.push('/custumers', { id: '1' });
-router.pathname.value; // /users
-router.query.value; // { id: '1' }
+router.pathname.get(); // /users
+router.query.get(); // { id: '1' }
 
 // Ficará errada
 router.push('/custumers?custumer_id=1'), { id: '2' };
-router.pathname.value; // /custumers?custumer_id=1
-router.query.value; // { id: '2' }
+router.pathname.get(); // /custumers?custumer_id=1
+router.query.get(); // { id: '2' }
 ```
 
 ### `setURL`
@@ -88,8 +117,8 @@ Exemplo
 const router = glheraRouter();
 
 router.setURL('/custumers?custumer_id=1');
-router.pathname.value; // /custumers
-router.query.value; // { id: '1' }
+router.pathname.get(); // /custumers
+router.query.get(); // { id: '1' }
 ```
 
 ### Configurando window.onpopstate
@@ -135,11 +164,3 @@ Sem contar que para dar suporte para **params** tem que seguimentar a rota e faz
 ## Configurando reatividade (signals)
 
 Essa lib usa [signal-factory](https://github.com/Simple-Organization/signal-factory) para configurar a reatividade entre `React`, `Preact`. `Svelte`, `Vue`, `Solid`, entre outros recomendo que leia a [documentação do signal-factory](https://github.com/Simple-Organization/signal-factory)
-
-### Acessando a reatividade
-
-```ts
-// Só chamar .value
-router.pathname.value;
-router.query.value;
-```
