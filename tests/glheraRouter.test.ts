@@ -291,3 +291,82 @@ test('When push a pathname that does not starts with / it must add', () => {
   expect(router.query.get()).toEqual({ arroz: 1 });
   expect(router.lastURL()).toBe('/?arroz=1');
 });
+
+//
+//
+
+test('match must work', () => {
+  const routes = {
+    '/': 'home',
+    '/about': 'about',
+    '/users': 'user',
+  };
+
+  const router = glheraRouter({ testing: true });
+
+  router.push('', {
+    arroz: 1,
+  });
+
+  expect(router.pathname.get()).toBe('/');
+  expect(router.query.get()).toEqual({ arroz: 1 });
+  expect(router.lastURL()).toBe('/?arroz=1');
+
+  //
+
+  let matched = router.match(routes as any);
+
+  expect(matched).toBe('home');
+
+  //
+
+  router.push('/about');
+
+  matched = router.match(routes as any);
+
+  expect(matched).toBe('about');
+
+  //
+
+  router.push('/users');
+
+  matched = router.match(routes as any);
+
+  expect(matched).toBe('user');
+
+  //
+
+  router.push('/users/posts');
+
+  matched = router.match(routes as any);
+
+  expect(matched).toBe('user');
+});
+
+
+//
+//
+
+test('match should return not found', () => {
+  const routes = {
+    '/': 'home',
+    '/about': 'about',
+    '/users': 'user',
+  };
+
+  const router = glheraRouter({ testing: true });
+
+  //
+
+  let matched = router.match(routes as any);
+
+  expect(matched).toBe('home');
+
+  //
+
+  router.push('/asdf');
+
+  matched = router.match(routes as any, 'notfound' as any);
+
+  expect(matched).toBe('notfound');
+});
