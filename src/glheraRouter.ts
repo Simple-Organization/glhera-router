@@ -85,6 +85,11 @@ export interface GLHeraRouter<Q extends Record<string, any>> {
    * @param notFound Function returned if no route is found
    */
   match(map: RoutesMap, notFound?: Function): Function | null;
+
+  /**
+   * Base route for router, like /glhera
+   */
+  base: string;
 }
 
 //
@@ -324,9 +329,10 @@ export function glheraRouter<Q extends Record<string, any>>(
     query: querySignal,
     push,
     replace,
+    match,
+    base,
     setURL,
     subWinPopState,
-    match,
     lastURL(): string {
       return lastURL;
     },
