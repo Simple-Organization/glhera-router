@@ -1,15 +1,5 @@
-import {
-  ReadableSignal,
-  setSignalFactory,
-  signalFactory,
-} from 'signal-factory';
-import { store } from 'signal-factory/store';
+import { ReadableSignal, Store } from 'simorg-store';
 import { isPathMatch } from './matchPath';
-
-//
-//
-
-setSignalFactory(store);
 
 //
 //
@@ -155,8 +145,8 @@ export function glheraRouter<Q extends Record<string, any>>(
   //
   //
 
-  const pathSignal = signalFactory(url.pathname);
-  const querySignal = signalFactory(parser(queryObj));
+  const pathSignal = new Store(url.pathname);
+  const querySignal = new Store(parser(queryObj));
   let lastURL = url.pathname + url.search;
 
   //
