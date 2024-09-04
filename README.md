@@ -163,4 +163,4 @@ Sem contar que para dar suporte para **params** tem que seguimentar a rota e faz
 
 ## Configurando reatividade (signals)
 
-Essa lib usa [signal-factory](https://github.com/Simple-Organization/signal-factory) para configurar a reatividade entre `React`, `Preact`. `Svelte`, `Vue`, `Solid`, entre outros recomendo que leia a [documentação do signal-factory](https://github.com/Simple-Organization/signal-factory)
+Essa lib usa [simorg-store](https://github.com/Simple-Organization/ssimorg-store) para configurar a reatividade com foco no `Preact` e no `Svelte`
